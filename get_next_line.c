@@ -14,11 +14,8 @@
 
 static void	ft_free(char **str)
 {
-	while (*str)
-	{
-		free(*str);
-		*str = NULL;
-	}
+	free(*str);
+	*str = NULL;
 }
 
 static char	*return_next_line(char **backup)
@@ -36,7 +33,6 @@ static char	*return_next_line(char **backup)
 		pre_backup = *backup;
 		line = ft_substr(pre_backup, 0, index + 1);
 		*backup = ft_strdup(&(*backup)[index + 1]);
-		free(pre_backup);
 		return (line);
 	}
 	line = ft_strdup(*backup);
@@ -44,12 +40,30 @@ static char	*return_next_line(char **backup)
 	return (line);
 }
 
-static char	*check_all(char **backup, int bytes, int fd)
+static char	*return_all(int fd, char **buf, char **backup)
 {
-	if (bytes < 0)
+	int		bytes;
+	char	*pre_backup;
+
+	if (!**backup)
+	{
+		ft_free(backup);
 		return (NULL);
-	if (!bytes && (!backup[fd] || !*backup[fd]))
-		return (NULL);
+	}
+	bytes = 1;
+	while (!ft_strchr(*backup, '\n') && bytes)
+	{
+		bytes = read(fd, *buf, BUFFER_SIZE);
+		if (bytes == -1)
+		{
+			ft_free(backup);
+			return (NULL);
+		}
+		(*buf)[bytes] = '\0';
+		pre_backup = *backup;
+		*backup = ft_strjoin(pre_backup, *buf);
+		free(pre_backup);
+	}
 	return (return_next_line(backup));
 }
 
@@ -57,8 +71,7 @@ char	*get_next_line(int fd)
 {
 	static char	*backup[256 + 1];
 	char		*buf;
-	char		*pre_backup;
-	int			bytes;
+	char		*res;
 
 	if (fd < 0 || fd > 256 || BUFFER_SIZE <= 0)
 		return (NULL);
@@ -67,17 +80,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (!backup[fd])
 		backup[fd] = ft_strdup("");
-	bytes = 1;
-	while (!ft_strchr(*backup, '\n') && bytes)
-	{
-		bytes = read(fd, buf, BUFFER_SIZE);
-		if (bytes == -1)
-			break ;
-		buf[bytes] = '\0';
-		pre_backup = *backup;
-		*backup = ft_strjoin(pre_backup, buf);
-		free(pre_backup);
-	}
+	res = return_all(fd, &buf, &backup[fd]);
 	free(buf);
-	return (check_all(backup, bytes, fd));
+	return (res);
 }
