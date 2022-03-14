@@ -6,7 +6,7 @@
 /*   By: sejeon@student.42seoul.kr <sejeon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 17:57:37 by sejeon@stud       #+#    #+#             */
-/*   Updated: 2022/03/10 17:57:37 by sejeon@stud      ###   ########.fr       */
+/*   Updated: 2022/03/14 19:50:05 by sejeon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ size_t	ft_strlen(const char *s)
 	size_t	strlen;
 
 	strlen = 0;
-	while (*s)
+	while (*s++)
 		strlen++;
 	return (strlen);
 }
 
-char	*ft_substr(const char *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	i;
 	char	*str;
@@ -49,7 +49,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	return (str);
 }
 
-char	*ft_strjoin(const char *s1, const char *s2)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
 	int		s1_len;
 	int		s2_len;
@@ -59,7 +59,7 @@ char	*ft_strjoin(const char *s1, const char *s2)
 	i = 0;
 	s1_len = ft_strlen(s1);
 	s2_len = ft_strlen(s2);
-	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + i));
+	str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 1));
 	if (!str)
 		return (NULL);
 	while (*s1)
@@ -78,7 +78,7 @@ char	*ft_strdup(const char *s)
 
 	i = 0;
 	len = ft_strlen(s);
-	str = (char *)malloc(sizeof(char) * len + 1);
+	str = (char *)malloc(sizeof(char) * (len + 1));
 	if (!str)
 		return (NULL);
 	while (s[i])
@@ -94,7 +94,7 @@ char	*ft_strchr(const char *s, int c)
 {
 	while (*s)
 	{
-		if (*s == (char) c)
+		if (*s == (char)c)
 			return ((char *)s);
 		s++;
 	}

@@ -6,7 +6,7 @@
 /*   By: sejeon <sejeon@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 14:14:53 by sejeon            #+#    #+#             */
-/*   Updated: 2022/03/07 19:45:33 by sejeon           ###   ########.fr       */
+/*   Updated: 2022/03/14 19:47:39 by sejeon           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ static char	*return_next_line(char **backup)
 	int		index;
 
 	index = 0;
-	line = NULL;
 	while ((*backup)[index] != '\n' && (*backup)[index])
 		index++;
 	if ((*backup)[index] == '\n')
@@ -33,6 +32,7 @@ static char	*return_next_line(char **backup)
 		pre_backup = *backup;
 		line = ft_substr(pre_backup, 0, index + 1);
 		*backup = ft_strdup(&(*backup)[index + 1]);
+		free(pre_backup);
 		return (line);
 	}
 	line = ft_strdup(*backup);
@@ -45,11 +45,6 @@ static char	*return_all(int fd, char **buf, char **backup)
 	int		bytes;
 	char	*pre_backup;
 
-	if (!**backup)
-	{
-		ft_free(backup);
-		return (NULL);
-	}
 	bytes = 1;
 	while (!ft_strchr(*backup, '\n') && bytes)
 	{
@@ -63,6 +58,11 @@ static char	*return_all(int fd, char **buf, char **backup)
 		pre_backup = *backup;
 		*backup = ft_strjoin(pre_backup, *buf);
 		free(pre_backup);
+	}
+	if (!**backup)
+	{
+		ft_free(backup);
+		return (NULL);
 	}
 	return (return_next_line(backup));
 }
