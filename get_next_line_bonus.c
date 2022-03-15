@@ -77,7 +77,10 @@ char	*get_next_line(int fd)
 		return (NULL);
 	buf = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!buf)
+	{
+		ft_free(backup);
 		return (NULL);
+	}
 	if (!backup[fd])
 		backup[fd] = ft_strdup("");
 	res = return_all(fd, &buf, &backup[fd]);
